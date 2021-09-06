@@ -1,17 +1,16 @@
 const crypto  = require('crypto');
-
-//const { randomInt } = require('crypto');
+const HashService   = require("../services/hash-service");
 
 class OtpService {
 
     async generateOtp(){
-        const otp = crypto.randomInt(50)
+        const otp = Math.floor(100000 + Math.random() * 900000);
         return otp;
     }
 
-    async verifyOtp(){
-        /* const otp = crypto.randomInt(1000, 9999);
-        return otp; */
+    verifyOtp(hashedOtp, data) {
+        let computedHash = HashService.hashOtp(data);
+        return computedHash === hashedOtp;
     }
 
     async sendBySms(phone, otp) {

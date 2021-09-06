@@ -12,12 +12,12 @@ const AuthController        = require("../controllers/AuthController");
 */
 
 
-router.post("/authanticate",AuthController.authanticate);
-
 router.post("/sendOtp",AuthController.sendOtp);
 
+router.post("/verifyOtp",AuthController.verifyOtp);
+
 /*-------------------Login Routes with password or OTP---------------*/
-router.post("/login",AuthController.login);
+//router.post("/login",AuthController.login);
 
 
 module.exports = router;

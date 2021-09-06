@@ -1,173 +1,116 @@
 const apiResponse   = require("../services/ApiResponse");
 const UserModel     = require("../models/UserModel");
-const bcrypt        = require('bcrypt');
-var uniqid          = require('uniqid');
 const OtpService    = require("../services/otp-service");
 const HashService   = require("../services/hash-service");
+const crypto        = require('crypto');
+const userService   = require("../services/user-service");
+const tokenService  = require('../services/jwttoken-service') 
 
+class AuthController {
 
-const {authSchema,profileSchema,RegistrationSchema,ChangePasswordSchema} =  require("../validation/validation_schema");
+    async sendOtp(req,res){
 
-const { loginAccessToken,signAccessToken,signRefreshToken } = require('../config/JwtToken')
+        const { phone } = req.body;
+        if (!phone) {
+            res.status(400).json({ message: 'Phone field is required!' });
+        }
 
+        const otp = await OtpService.generateOtp();
 
-exports.authanticate = async (req, res,next) => {
-    try {
+        const ttl = 1000 * 60 * 15; // 15 min
+        const expires = Date.now() + ttl;
+        const data = `${phone}.${otp}.${expires}`;
+        const hash = HashService.hashOtp(data);
 
-            const { email,grantType,phone } = req.body;
-            const device_info = req.body.device_info ? req.body.device_info : null;
-
-            //const result = await authSchema.validateAsync(req.body);
-
-            if(grantType == 'email'){
-                //var query = { email : result.email };
-                var NextAction = 'PASSWORD';
-                var tokenKey = email;
-
-            } else if(grantType == 'phone'){
-                //var query = { phone : result.phone };
-                var NextAction = 'PIN';
-                var tokenKey = phone;
-            } else {
-                return apiResponse.validationErrorWithData(res, "Somthing went Wrong,Please try again."); 
-            }
-
-            const accessToken = await loginAccessToken(tokenKey);
-            
-            let Data = {
-                token: accessToken,
-                status : "Pending",
-                nextAction :NextAction,
-            };
-
-            return apiResponse.successResponseWithData(res,"Login Next Action", Data);
-    
-
-    } catch (err) {
-
-        console.log(err);
-
-        if(err.isJoi === true){ return apiResponse.validationErrorWithData(res, err.details[0].message); }
-
-        return apiResponse.ErrorResponse(res, err);
+        // send OTP
+        try {
+            // await otpService.sendBySms(phone, otp);
+            res.status(200).json({
+                hash: `${hash}.${expires}`,
+                phone,
+                otp,
+            });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ message: 'message sending failed' });
+        }
     }
-}
 
-exports.sendOtp = async (req, res,next) => {
+    async verifyOtp(req,res){
 
-    try {
-            const { phone } = req.body;
+            try {
+                const { phone,otp,hash } = req.body;
 
-            if(!phone){
-                return apiResponse.validationErrorWithData(res, "Phone Number is mandatory."); 
-            }
-            
-            const otp = await OtpService.generateOtp();
-
-            const ttl = 1000 * 60 * 2; // 2 min
-            const expires = Date.now() + ttl;
-            const data = `${phone}.${otp}.${expires}`;
-
-            const hash = HashService.hasOtp(data);
-            
-            let Data = {
-                hash: accessToken,
-                otp : otp,
-                phone :phone,
-            };
-
-            return apiResponse.successResponseWithData(res,"Login Next Action", Data);
-    
-
-    } catch (err) {
-
-        console.log(err);
-
-        //if(err.isJoi === true){ return apiResponse.validationErrorWithData(res, err.details[0].message); }
-
-        return apiResponse.ErrorResponse(res, err);
-    }
-}
-
-
-exports.login = async (req, res,next) => {
-
-    try {
-            const { email, password,grantType,phone } = req.body;
-            const device_info = req.body.device_info ? req.body.device_info : null;
-
-            //const result = await authSchema.validateAsync(req.body);
-
-            if(grantType == 'email'){
-                var query = { email : email };
-
-            } else if(grantType == 'phone'){
-                var query = { phone : phone };
-            }
-            
-            const user = await UserModel.findOne(query);
-            
-            //----- If User found then login--------------//
-            if (user){
-
-                const isMatch = await user.isPasswordMatch(password);
-
-                if(!isMatch){
-                    return apiResponse.unauthorizedResponse(res, "Employee Code or Password are invalid.");
+                if (!otp || !hash || !phone) {
+                    return apiResponse.validationErrorWithData(res, "All fields are required."); 
                 }
 
-                if(user.status == "active"){
+                const [hashedOtp, expires] = hash.split('.');
+                
+                if (Date.now() > +expires) {
+                    
+                    return apiResponse.validationErrorWithData(res, "OTP expired!."); 
+                }
+
+                const data = `${phone}.${otp}.${expires}`;
+
+                const isValid = OtpService.verifyOtp(hashedOtp, data);
+
+                console.log(isValid);
+                
+                if(!isValid){
+                    
+                    return apiResponse.failedResponse(res,"Invalid OTP");
+                }
+
+                /*-----If OPT is valid Then first Check user if already registered then login generate JWT token otherwise insert user and login and Generate JWT token----*/
+                
+                let user;
+                try {
+                    user = await userService.findUser({ phone });
+                    if (!user) {
+                        user = await userService.createUser({ phone });
+                    }
+
+                    const { accessToken, refreshToken } = tokenService.generateTokens({
+                        _id: user._id,
+                        activated: false,
+                    });
 
                     let userData = {
                         _id: user._id,
                         user_id: user.user_id,
-                        emp_code:user.emp_code,
-                        name: user.name,
                         phone: user.phone,
                         email: user.email,
                         role: user.role,
                         status : user.status,
-                        profile_image :user.profile_image,
-                    };
-
-                    const accessToken = await signAccessToken(user.id);
-                    const refreshToken = await signRefreshToken(user.id);
+                        avatar :user.avatar,
+                    }
 
                     userData.accessToken = accessToken;
                     userData.refreshToken = refreshToken;
 
+                    //res.json({ user: user, auth: true,accessToken,refreshToken });
+
                     return apiResponse.successResponseWithData(res,"Login Success.", userData);
 
-                } else {
-                    return apiResponse.unauthorizedResponse(res, "Account is not confirmed. Please confirm your account.");
+                } catch (err) {
+                    console.log(err);
+                    res.status(500).json({ message: 'Db error' });
                 }
                 
-            } else {
-                //----------Register New User------------------//
+        } catch (err) {
 
-                let user = new UserModel({
-                    user_id:uniqid(),
-                    password,name:'',phone,email,
-                    login_by:grantType,
-                });
+            console.log(err);
+            return apiResponse.ErrorResponse(res, "Something went Wrong,Please Try Again.! ");
+        }
 
-                const response = await user.save();
-
-                try{
-                    return apiResponse.successResponseWithData(res,"Login successfully.",response);
-                } catch(err){
-                    return apiResponse.ErrorResponse(res, "Something went Wrong,Please Try Again.! ");
-                } 
-
-            }
-        
-
-    } catch (err) {
-
-        console.log(err);
-
-        if(err.isJoi === true){ return apiResponse.validationErrorWithData(res, err.details[0].message); }
-
-        return apiResponse.ErrorResponse(res, err);
     }
+
+    async logout(req,res){
+
+    }
+
 }
+
+module.exports = new AuthController();

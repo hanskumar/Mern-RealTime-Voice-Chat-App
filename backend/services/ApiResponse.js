@@ -41,6 +41,14 @@ exports.validationErrorWithData = function (res, msg, data) {
 	return res.status(422).json(resData);
 };
 
+exports.failedResponse = function (res, msg) {
+	var resData = {
+		status: 0,
+		message: msg,
+	};
+	return res.status(400).json(resData);
+};
+
 exports.unauthorizedResponse = function (res, msg) {
 	var data = {
 		status: 0,
