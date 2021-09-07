@@ -3,24 +3,28 @@
 */
 const JWT           = require('jsonwebtoken');
 const apiResponse   = require("../services/ApiResponse");
+const tokenService  = require("../services/jwttoken-service");
 
-module.exports = function (req, res, next) {
+
+module.exports = async function (req, res, next) {
 
         const authHeader = req.headers['authorization'] || req.headers['x-access-token'];
         if(authHeader){
 
             var token  = req.headers.authorization.split("Bearer ")[1] || undefined;
 
-            JWT.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET, function(error, payload) {
-                if (error) {
-                    //console.log(error);
-                    return apiResponse.unauthorizedResponse(res, "Unautharized Request");
-                } else {
-                    req.payload = payload;
-                    var authenticated = true;
-                    next();
-                }
-            });
+            if(!token){
+                throw new Error();
+            }
+
+            const userData = await tokenService.verifyAccessToken(token);
+
+            if (!userData) {
+                throw new Error();
+            }
+            req.user = userData;
+            next();
+
         } else {
             return apiResponse.unauthorizedResponse(res, "Unautharized Error");
         }

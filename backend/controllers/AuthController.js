@@ -79,7 +79,6 @@ class AuthController {
 
                     let userData = {
                         _id: user._id,
-                        user_id: user.user_id,
                         phone: user.phone,
                         email: user.email,
                         role: user.role,

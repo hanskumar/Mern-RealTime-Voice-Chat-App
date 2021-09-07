@@ -6,6 +6,9 @@ import PhoneEmailStep from './pages/Steps/PhoneEmailStep';
 import Authenticate from './pages/Authenticate';
 import AccountActivate from './pages/AccountActivate';
 import GuestRoute from './components/Routes/GuestRoute';
+import SemiProtectedRoute from './components/Routes/SemiProtectedRoute';
+import ProtectedRoute from './components/Routes/ProtectedRoute';
+
 import Rooms from './pages/Rooms';
 
 function App() {
@@ -22,13 +25,17 @@ function App() {
             <Authenticate />
         </GuestRoute>
 
-        <Route path="/activate" exact>
+        <SemiProtectedRoute path="/activate" exact>
             <AccountActivate />
-        </Route>
+        </SemiProtectedRoute>
 
-        <Route path="/rooms" exact>
+        <ProtectedRoute path="/rooms" exact>
             <Rooms/>
-        </Route>
+        </ProtectedRoute>
+
+        <ProtectedRoute path="/profile" exact>
+            <Rooms/>
+        </ProtectedRoute>
 
       </Switch> 
     

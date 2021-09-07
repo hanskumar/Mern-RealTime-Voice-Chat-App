@@ -3,13 +3,20 @@ import Card from '../../../../components/shard/Card/Card';
 import TextInput from '../../../../components/shard/TextInput';
 import Button from '../../../../components/shard/Button/Button';
 import styles from '../PhoneEmail.Module.css'; 
+import { sendOtp } from '../../../../actions';
+
+import {useDispatch,useSelector} from 'react-redux'
 
 const Phone = () => {
 
     const [phone,setPhone] = useState();
 
-    const onNext = () =>{
+    const dispatch = useDispatch()
 
+    const Submit = (e) =>{
+
+        e.preventDefault();
+        dispatch(sendOtp(phone))
     }
 
     return (
@@ -22,7 +29,7 @@ const Phone = () => {
                 />
                 <div>
                     <div className={styles.actionButtonWrap}>
-                        <Button text="Next" onClick={onNext} />
+                        <Button text="Next" onClick={Submit} />
                     </div>
                     <p className={styles.bottomParagraph}>
                         By entering your number, you’re agreeing to our Terms of
