@@ -15,6 +15,7 @@ class AuthController {
             res.status(400).json({ message: 'Phone field is required!' });
         }
 
+        
         const otp = await OtpService.generateOtp();
 
         const ttl = 1000 * 60 * 15; // 15 min
@@ -35,6 +36,7 @@ class AuthController {
             res.status(500).json({ message: 'message sending failed' });
         }
     }
+
 
     async verifyOtp(req,res){
 
@@ -89,7 +91,7 @@ class AuthController {
                     userData.accessToken = accessToken;
                     userData.refreshToken = refreshToken;
 
-                    //res.json({ user: user, auth: true,accessToken,refreshToken });
+                    /*---------Store Refresh Token in cookies------------*/
 
                     return apiResponse.successResponseWithData(res,"Login Success.", userData);
 

@@ -4,11 +4,10 @@ require("dotenv").config();
 const express       = require('express')
 const app           = express();
 const rateLimit     = require('express-rate-limit');
-const bodyParser    = require('body-parser');
-const mongoose      = require('mongoose');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet        = require('helmet');
 const apiRouter     = require("./routes/ApiRoutes");
+const cors = require('cors')
 
 /**
  * DB Connect
@@ -29,13 +28,16 @@ const limiter = rateLimit({
 //  apply to all requests
 app.use(limiter);
 
-/* app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true })); */
 
+// parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 
+// set security HTTP headers
+app.use(helmet())
+
+app.use(cors())
 
 app.use("/api/", apiRouter);
 

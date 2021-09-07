@@ -38,7 +38,7 @@ exports.validationErrorWithData = function (res, msg, data) {
 		message: msg,
 		data: data
 	};
-	return res.status(422).json(resData);
+	return res.status(400).json(resData);
 };
 
 exports.failedResponse = function (res, msg) {

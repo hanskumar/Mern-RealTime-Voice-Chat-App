@@ -4,7 +4,7 @@ import styles from './PhoneEmail.Module.css'
 import Email from './Email'
 import Phone from './Phone'
 
-const PhoneEmailStep = () => {
+const PhoneEmailStep = ({onNext}) => {
 
     const [type, setType] = useState('phone');
     
@@ -27,7 +27,7 @@ const PhoneEmailStep = () => {
                         </button>
                     </div>
                     {
-                        type === 'phone' ? <Phone/> : <Email/>
+                        type === 'phone' ? <Phone onNext={onNext}/> : <Email onNext={onNext}/>
                     }
                     
                 </div>

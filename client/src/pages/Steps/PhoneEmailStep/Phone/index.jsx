@@ -7,36 +7,40 @@ import { sendOtp } from '../../../../actions';
 
 import {useDispatch,useSelector} from 'react-redux'
 
-const Phone = () => {
+const Phone = ({onNext}) => {
 
-    const [phone,setPhone] = useState();
-
+    const[phone,setPhone] = useState('');
+    
     const dispatch = useDispatch()
 
     const Submit = (e) =>{
 
         e.preventDefault();
-        dispatch(sendOtp(phone))
+        console.log("phone Value:",phone);
+        dispatch(sendOtp({phone}))
+        onNext();
     }
 
     return (
         <>
             <Card title="Enter your Phone Number" icon="phone" >
-                <TextInput
-                    placeholder="+917047679756"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                />
-                <div>
-                    <div className={styles.actionButtonWrap}>
-                        <Button text="Next" onClick={Submit} />
+                <form onSubmit={Submit}>
+                    <TextInput
+                        placeholder="+917047679756"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                    />
+                    <div>
+                        <div className={styles.actionButtonWrap}>
+                            <Button text="Next" />
+                        </div>
+                        <p className={styles.bottomParagraph}>
+                            By entering your number, you’re agreeing to our Terms of
+                            Service and Privacy Policy. <br/>
+                            Thanks!
+                        </p>
                     </div>
-                    <p className={styles.bottomParagraph}>
-                        By entering your number, you’re agreeing to our Terms of
-                        Service and Privacy Policy. <br/>
-                        Thanks!
-                    </p>
-                </div>
+                </form>
             </Card>
         </>
     )
