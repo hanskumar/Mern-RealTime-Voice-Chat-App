@@ -1,5 +1,6 @@
 import axiosIntance from '../helpers/axios'
 import { sendOtpConstant } from '../constants/constants'
+import { verIfyOtpConstant } from '../constants/constants'
  
 
 export const sendOtp=(phone)=>{
@@ -21,9 +22,6 @@ export const sendOtp=(phone)=>{
 
             const {phone,hash} = res.data;
             console.log("API REturn data..",res.data);
-
-            //localStorage.setItem('token',data.accessToken);
-            //localStorage.setItem('user', JSON.stringify(data));
 
             dispatch({
                 type:sendOtpConstant.OTP_SEND_SUCCESS,
@@ -58,9 +56,17 @@ export const verfifyOtp= (data)=>{
 
         if(res.status === 200){
 
-            // Dispatch Success Case
+            const { data } = res.data;
 
+            console.log("Verify OTP respononse",data);
 
+            localStorage.setItem('token',data.accessToken);
+            localStorage.setItem('user', JSON.stringify(data));
+
+            dispatch({
+                type:verIfyOtpConstant.OTP_VERIFICATION_SUCCESS,
+                payload:{user:data,token:data.accessToken}
+            });
 
         } else {
 

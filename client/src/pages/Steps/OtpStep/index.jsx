@@ -2,6 +2,7 @@ import React,{useState} from 'react'
 import styles from './OtpStep.Module.css'
 import {useSelector,useDispatch } from 'react-redux'
 import {verfifyOtp} from '../../../actions'
+import {useHistory} from "react-router-dom"
 
 import TextInput from '../../../components/shard/TextInput'
 import Card from '../../../components/shard/Card/Card'
@@ -16,6 +17,8 @@ const OtpStep = () => {
 
     console.log("Read Data form Redux::",auth);
 
+    const history = useHistory();
+
     const submit = (e) => {
         e.preventDefault();
 
@@ -23,6 +26,8 @@ const OtpStep = () => {
         console.log("Requested data for verify::",data);
 
         dispatch(verfifyOtp(data));
+
+        history.push('/activate');
     }
 
     return (

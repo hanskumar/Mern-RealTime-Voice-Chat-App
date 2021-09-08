@@ -25,9 +25,13 @@ function App() {
             <Authenticate />
         </GuestRoute>
 
-        <SemiProtectedRoute path="/activate" exact>
+        {/* <SemiProtectedRoute path="/activate" exact>
             <AccountActivate />
-        </SemiProtectedRoute>
+        </SemiProtectedRoute> */}
+
+        <Router path="/activate" exact>
+            <AccountActivate />
+        </Router>
 
         <ProtectedRoute path="/rooms" exact>
             <Rooms/>

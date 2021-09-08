@@ -1,5 +1,5 @@
 import { sendOtpConstant } from '../constants/constants'
-
+import { verIfyOtpConstant } from '../constants/constants'
 
 const intialState = {
     token:'',
@@ -45,7 +45,19 @@ export default (state=intialState,action)=>{
                     phone:action.payload.phone,
                     hash:action.payload.hash
                 }
-                break    
+                break   
+                
+        case verIfyOtpConstant.OTP_VERIFICATION_SUCCESS:
+                state = {
+                    ...state,
+                    isloading:false,
+                    otpStatus:true,
+                    user:action.payload.data,
+                    isAuth:true,
+                    isActivated:true,
+                    token:action.payload.token
+                }
+                break          
     }
     return state;
 
