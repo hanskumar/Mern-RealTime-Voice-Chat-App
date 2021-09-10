@@ -10,8 +10,8 @@ class ActivateController {
 
     async updateName(req,res){
 
-        const { name } = req.body;
-        if (!name) {
+        const { fullname } = req.body;
+        if (!fullname) {
             res.status(400).json({ message: 'Name field is required!' });
         }
 
@@ -25,7 +25,7 @@ class ActivateController {
         try {
 
             user.activated = true;
-            user.name = name;
+            user.name = fullname;
             //user.avatar = 'img url';
             const response = user.save();
 

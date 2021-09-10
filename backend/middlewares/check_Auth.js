@@ -7,12 +7,12 @@ const tokenService  = require("../services/jwttoken-service");
 
 
 module.exports = async function (req, res, next) {
-
+    try{
         const authHeader = req.headers['authorization'] || req.headers['x-access-token'];
         if(authHeader){
 
             var token  = req.headers.authorization.split("Bearer ")[1] || undefined;
-
+           
             if(!token){
                 throw new Error();
             }
@@ -23,9 +23,13 @@ module.exports = async function (req, res, next) {
                 throw new Error();
             }
             req.user = userData;
-            next();
+            next(); 
 
         } else {
             return apiResponse.unauthorizedResponse(res, "Unautharized Error");
         }
+
+    } catch (err) {
+        res.status(401).json({ message: 'Invalid token' });
+    }
 }

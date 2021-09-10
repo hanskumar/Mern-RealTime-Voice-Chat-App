@@ -1,11 +1,11 @@
 import React,{useState} from 'react'
 import Card from '../../../components/shard/Card/Card'
 import TextInput from '../../../components/shard/TextInput'
-import Button from '../../../components/shard/Button/Button'
+import Button from '../../../components/shard/Button/Button' 
+import {setName} from '../../../actions'
+import { useSelector,useDispatch } from 'react-redux'
 
-
-    
-const NameStep = () => {
+const NameStep = ({onNext}) => {
 
     const parag = {
         //width: '70%',
@@ -13,15 +13,26 @@ const NameStep = () => {
         margin: '20px auto'
     };
 
-    const[fullname,setFullname] = useState();
+    const[fullname,setFullname] = useState('');
 
-    const nextStep = () =>{
+    const dispatch = useDispatch();
 
+    const submit = (e) =>{
+        e.preventDefault();
+        const data = dispatch(setName({fullname}));
+
+        try{
+            console.log(data);
+            onNext();
+        } catch(err){
+            console.log(err);
+        }
     }
 
     return (
         <>
         <div className="cardWrapper">
+            <form onSubmit={submit} >
             <Card title="What’s your full name?" icon="goggle-emoji">
                 <TextInput
                     value={fullname}
@@ -31,9 +42,10 @@ const NameStep = () => {
                     Please use your real Full Name here.. !
                 </p>
                 <div>
-                    <Button onClick={nextStep} text="Next" />
+                    <Button text="Next" />
                 </div>
             </Card>
+            </form>
         </div>    
         </>
     )

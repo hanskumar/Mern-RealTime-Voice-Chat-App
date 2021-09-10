@@ -19,9 +19,9 @@ router.post("/sendOtp",AuthController.sendOtp);
 router.post("/verifyOtp",AuthController.verifyOtp);
 
 /*-------------------Seme Protected Route---------------*/
-router.post("/updateName",isAuth,ActivateController.updateName);
+router.post("/setName",isAuth,ActivateController.updateName);
 
-router.post("/updateAvatar",isAuth,ActivateController.updateAvatar);
+router.post("/setAvatar",isAuth,ActivateController.updateAvatar);
 
 
 module.exports = router;

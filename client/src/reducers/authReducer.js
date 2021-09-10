@@ -1,5 +1,7 @@
 import { sendOtpConstant } from '../constants/constants'
 import { verIfyOtpConstant } from '../constants/constants'
+import {accountActivationConstant} from '../constants/constants'
+import { avatarConstant } from '../constants/constants'
 
 const intialState = {
     token:'',
@@ -52,12 +54,33 @@ export default (state=intialState,action)=>{
                     ...state,
                     isloading:false,
                     otpStatus:true,
-                    user:action.payload.data,
+                    //user:action.payload.data,
                     isAuth:true,
-                    isActivated:true,
                     token:action.payload.token
                 }
-                break          
+                break   
+                
+        case accountActivationConstant.SET_NAME_SUCCESS:
+
+            state = {
+                ...state,
+                user:{
+                    ...state.user,
+                    name:action.payload.name
+                }
+            }
+            break   
+                
+        case avatarConstant.SET_AVATAR_SUCCESS:
+
+            state = {
+                ...state,
+                user:{
+                    ...state.user,
+                    avatar:action.payload.avatar
+                }
+            }
+            break         
     }
     return state;
 

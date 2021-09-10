@@ -5,8 +5,6 @@ import { verIfyOtpConstant } from '../constants/constants'
 
 export const sendOtp=(phone)=>{
 
-    console.log("ation called:::",phone);
-
     return async(dispatch) => {
 
         // dispatch request 

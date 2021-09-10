@@ -1,6 +1,6 @@
 import React from 'react'
 import Card from '../Card/Card'
-import styles from './Loader.Module.css'
+import styles from './Loader.module.css'
 
 const Loader = ({message}) => {
     return (

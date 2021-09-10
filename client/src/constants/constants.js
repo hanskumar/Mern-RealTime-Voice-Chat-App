@@ -10,6 +10,19 @@ export const verIfyOtpConstant = {
     OTP_VERIFICATION_REQUIEST:'OTP_VERIFICATION_REQUIEST'
 }
 
+export const accountActivationConstant = {
+    SET_NAME_FAILURE:'SET_NAME_FAILURE',
+    SET_NAME_SUCCESS:'SET_NAME_SUCCESS',
+    SET_NAME_REQUIEST:'SET_NAME_REQUIEST'
+}
+
+
+export const avatarConstant = {
+    SET_AVATAR_FAILURE:'SET_AVATAR_FAILURE',
+    SET_AVATAR_SUCCESS:'SET_AVATAR_SUCCESS',
+    SET_AVATAR_REQUIEST:'SET_AVATAR_REQUIEST'
+}
+
 
 export const authConstant = {
     AUTH_FAILURE:'AUTH_FAILURE',
