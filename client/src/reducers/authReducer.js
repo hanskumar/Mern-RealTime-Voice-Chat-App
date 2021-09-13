@@ -56,6 +56,7 @@ export default (state=intialState,action)=>{
                     otpStatus:true,
                     //user:action.payload.data,
                     isAuth:true,
+                    isActivated:true,
                     token:action.payload.token
                 }
                 break   

@@ -8,7 +8,6 @@ import AccountActivate from './pages/AccountActivate';
 import GuestRoute from './components/Routes/GuestRoute';
 import SemiProtectedRoute from './components/Routes/SemiProtectedRoute';
 import ProtectedRoute from './components/Routes/ProtectedRoute';
-
 import Rooms from './pages/Rooms';
 
 function App() {
@@ -33,7 +32,7 @@ function App() {
             <AccountActivate />
         </Router>
 
-        <ProtectedRoute path="/rooms" exact>
+        <ProtectedRoute path="/rooms" >
             <Rooms/>
         </ProtectedRoute>
 

@@ -4,7 +4,8 @@ const OtpService    = require("../services/otp-service");
 const HashService   = require("../services/hash-service");
 const crypto        = require('crypto');
 const userService   = require("../services/user-service");
-const tokenService  = require('../services/jwttoken-service') 
+const tokenService  = require('../services/jwttoken-service');
+const UserDto = require('../dtos/user-dtos'); 
 
 class AuthController {
 
@@ -57,8 +58,6 @@ class AuthController {
                 const data = `${phone}.${otp}.${expires}`;
 
                 const isValid = OtpService.verifyOtp(hashedOtp, data);
-
-                console.log(isValid);
                 
                 if(!isValid){
                     
@@ -75,8 +74,7 @@ class AuthController {
                     }
 
                     const { accessToken, refreshToken } = tokenService.generateTokens({
-                        _id: user._id,
-                        activated: false,
+                        _id: user._id
                     });
 
                     let userData = {
@@ -93,6 +91,16 @@ class AuthController {
 
                     /*---------Store Refresh Token in cookies------------*/
 
+                    res.cookie('refreshToken', refreshToken, {
+                        maxAge: 1000 * 60 * 60 * 24 * 30,
+                        httpOnly: true,
+                    });
+            
+                    res.cookie('accessToken', accessToken, {
+                        maxAge: 1000 * 60 * 60 * 24 * 30,
+                        httpOnly: true,
+                    });
+
                     return apiResponse.successResponseWithData(res,"Login Success.", userData);
 
                 } catch (err) {
@@ -106,6 +114,73 @@ class AuthController {
             return apiResponse.ErrorResponse(res, "Something went Wrong,Please Try Again.! ");
         }
 
+    }
+
+    async refreshToken(req,res){
+
+        // get refresh token from cookies
+        const { refreshToken } = req.cookies;
+
+        if(!refreshToken){
+            return apiResponse.validationErrorWithData(res, "No Token Found"); 
+        }
+
+        // verify refresh token
+        let userdata;
+        try{
+            userdata = await tokenService.verifyRefreshToken(refreshToken);
+        } catch(err){
+            return apiResponse.unauthorizedResponse(res, "Unautharized Error");
+        }
+
+        
+        // check refresh token from DB
+        try{
+            const token = tokenService.findRefreshToken(userdata.id,refreshToken);
+
+            if(!token){
+                return apiResponse.unauthorizedResponse(res, "No RefToken found in DB ");
+            }
+
+        } catch(err){
+            return apiResponse.unauthorizedResponse(res, "Internal Error");
+        }
+        
+        // check if valid user
+        try{
+            const user = userService.findUser({ _id: userdata.id });
+            if (!user) {
+                return res.status(404).json({ message: 'No user' });
+            }
+
+            // genrate new Accesstoken
+            const { accessToken, NewrefreshToken } = tokenService.generateTokens({
+                _id: userdata._id
+            });
+
+            // update refresh token
+            const token = tokenService.updateRefreshToken(userdata.id,NewrefreshToken);
+
+
+            // set new accessToken ,Refresh token in cookies
+            res.cookie('refreshToken', NewrefreshToken, {
+                maxAge: 1000 * 60 * 60 * 24 * 30,
+                httpOnly: true,
+            });
+
+            res.cookie('accessToken', accessToken, {
+                maxAge: 1000 * 60 * 60 * 24 * 30,
+                httpOnly: true,
+            });
+
+            // send response to the client
+            const userDto = new UserDto(user);
+            res.json({ user: userDto, auth: true });
+
+        } catch(err){
+            return apiResponse.unauthorizedResponse(res, "Internal Error");
+        }
+       
     }
 
     async logout(req,res){

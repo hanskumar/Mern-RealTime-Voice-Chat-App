@@ -8,6 +8,7 @@ import {setAvatar} from '../../../actions'
 import Loader from '../../../components/shard/Loader'
 
 import { useSelector,useDispatch } from 'react-redux'
+import { useHistory } from 'react-router'
 
 
 const AvatarStep = () => {
@@ -20,6 +21,7 @@ const AvatarStep = () => {
     const[image, setImage] = useState('/images/monkey-avatar.png');
     const[loading,setLoading] = useState(false);
 
+    const history = useHistory();
 
     const dispatch = useDispatch();
     const auth = useSelector(state=>state.auth);
@@ -52,13 +54,19 @@ const AvatarStep = () => {
             method:"post",
             body: data
         })
+        .then(res=>res.json())
         .then(data => {
 
             console.log("Image URK",data.url);
 
-            /* setImage(data.url);
-            dispatch(setAvatar({avatar_url:data.url})) */
+            setImage(data.url);
+            dispatch(setAvatar({avatar_url:data.url}))
             setLoading(false);
+
+            console.log("vallue of isActivated",auth.isActivated);
+            console.log("vallue of auth",auth.isAuth);
+
+            history.push('/rooms');
         })
         .catch(err => setLoading(false))
     }

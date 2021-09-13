@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const refreshTokenModel = require('../models/TokenModel');
 
 class TokenService {
 
@@ -18,6 +19,22 @@ class TokenService {
 
     async verifyRefreshToken(refreshToken) {
         return jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET);
+    }
+
+    async findRefreshToken(UserId,refreshToken) {
+       return await refreshTokenModel.findOne({
+            userId: UserId,
+            token: refreshToken,
+        });
+    }
+
+    async updateRefreshToken(UserId,refreshToken){
+
+        return await refreshTokenModel.findOneAndUpdate({
+            userId:UserId,
+            token:refreshToken
+        });
+
     }
 
 }
