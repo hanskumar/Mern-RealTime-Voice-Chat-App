@@ -3,6 +3,7 @@ import styles from './OtpStep.Module.css'
 import {useSelector,useDispatch } from 'react-redux'
 import {verfifyOtp} from '../../../actions'
 import {useHistory} from "react-router-dom"
+import { useForm } from "react-hook-form";
 
 import TextInput from '../../../components/shard/TextInput'
 import Card from '../../../components/shard/Card/Card'
@@ -14,20 +15,21 @@ const OtpStep = () => {
     const dispatch = useDispatch();
 
     const auth = useSelector(state => state.auth);
-
-    console.log("Read Data form Redux::",auth);
-
+    //console.log("Read Data form Redux::",auth);
     const history = useHistory();
 
-    const submit = (e) => {
-        e.preventDefault();
+    const { register, handleSubmit } = useForm();
 
-        const data = {otp,phone:auth.phone,hash:auth.hash}
+    const onSubmit = async(data)=> {
+
+        console.log(data);
+        
+        /* const data = {otp,phone:auth.phone,hash:auth.hash}
         console.log("Requested data for verify::",data);
 
         dispatch(verfifyOtp(data));
 
-        history.push('/activate');
+        history.push('/activate'); */
     }
 
     return (
@@ -37,7 +39,7 @@ const OtpStep = () => {
                     title="Enter the code we just texted you"
                     icon="lock-emoji"
                 >
-                    <form  onSubmit={submit}>
+                    <form  onSubmit={handleSubmit(onSubmit)}>
                     <TextInput
                         value={otp}
                         onChange={(e) => setOtp(e.target.value)}

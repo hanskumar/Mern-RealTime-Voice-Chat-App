@@ -21,6 +21,17 @@ class TokenService {
         return jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET);
     }
 
+    async storeRefreshToken(token, userId) {
+        try {
+            await refreshTokenModel.create({
+                token,
+                userId,
+            });
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
     async findRefreshToken(UserId,refreshToken) {
        return await refreshTokenModel.findOne({
             userId: UserId,
@@ -34,9 +45,7 @@ class TokenService {
             userId:UserId,
             token:refreshToken
         });
-
     }
-
 }
 
 module.exports = new TokenService()
