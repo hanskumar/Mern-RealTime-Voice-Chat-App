@@ -16,27 +16,33 @@ export const sendOtp=(phone)=>{
             ...phone
         });
 
-        if(res.status === 200){
+        try {
 
-            const {phone,hash} = res.data;
-            console.log("API REturn data..",res.data);
+            if(res.status === 200){
 
-            dispatch({
-                type:sendOtpConstant.OTP_SEND_SUCCESS,
-                payload:{phone,hash}
-            });
+                const {phone,hash} = res.data;
+                //console.log("API REturn data..",res.data);
+    
+                dispatch({
+                    type:sendOtpConstant.OTP_SEND_SUCCESS,
+                    payload:{phone,hash}
+                });
+    
+            } else {
+    
+                dispatch({
+                    type:sendOtpConstant.OTP_SEND_FAILURE,
+                    payload:{error:res.data.err}
+                });
+            }
 
-        } else {
-
+        } catch (err){
+            console.log(err);
             dispatch({
                 type:sendOtpConstant.OTP_SEND_FAILURE,
                 payload:{error:res.data.err}
             });
-
         }
-
-        console.log(res);
-
     }
 }
 
@@ -46,31 +52,36 @@ export const verfifyOtp= (data)=>{
 
         // Dispatch action before send request
 
-
-        //API call
-        const res = await axiosIntance.post('/verifyOtp',{
-            ...data
-        });
-
-        if(res.status === 200){
-
-            const { data } = res.data;
-
-            console.log("Verify OTP respononse",data);
-
-            localStorage.setItem('token',data.accessToken);
-            localStorage.setItem('user', JSON.stringify(data));
-
+        try {
+            //API call
+            const res = await axiosIntance.post('/verifyOtp',{...data});
+    
+            if(res.status === 200){
+    
+                const { data } = res.data;
+                //console.log("Verify OTP respononse",data);
+    
+                //localStorage.setItem('token',data.accessToken);
+                //localStorage.setItem('user', JSON.stringify(data));
+    
+                dispatch({
+                    type:verIfyOtpConstant.OTP_VERIFICATION_SUCCESS,
+                    payload:{user:data,token:data.accessToken}
+                });
+    
+            } else {
+    
+                dispatch({
+                    type:verIfyOtpConstant.OTP_VERIFICATION_FAILURE,
+                    payload:{error:res.data.err}
+                });
+            }
+        
+        } catch(err){
             dispatch({
-                type:verIfyOtpConstant.OTP_VERIFICATION_SUCCESS,
-                payload:{user:data,token:data.accessToken}
+                type:verIfyOtpConstant.OTP_VERIFICATION_FAILURE,
+                payload:{error:err}
             });
-
-        } else {
-
-            //Dipatch Failure Case
-
-
         }
     }
 

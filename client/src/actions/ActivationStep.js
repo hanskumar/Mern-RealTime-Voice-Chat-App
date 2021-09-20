@@ -10,25 +10,30 @@ export const setName = (fullname)=>{
     return async (dispatch)=> {
 
         // API CAll
-        const res = await axiosIntance.post('/setName',{
-            ...fullname
-        });
+        const res = await axiosIntance.post('/setName',{...fullname});
 
-        if(res.status === 200){
+        try{
 
-            const {data} = res.data;
-            console.log("API REturn data..",res.data);
+            if(res.status === 200){
+                const {data} = res.data;
+                console.log("API REturn data..",res.data);
+                dispatch({
+                    type:accountActivationConstant.SET_NAME_SUCCESS,
+                    payload:{name:data.name}
+                }); 
+    
+            } else {
+    
+                dispatch({
+                    type:accountActivationConstant.SET_NAME_FAILURE,
+                    payload:{error:res.data.err}
+                }); 
+            }
 
-            dispatch({
-                type:accountActivationConstant.SET_NAME_SUCCESS,
-                payload:{name:data.name}
-            }); 
-
-        } else {
-
+        } catch(err){
             dispatch({
                 type:accountActivationConstant.SET_NAME_FAILURE,
-                payload:{error:res.data.err}
+                payload:{error:err}
             }); 
         }
     }

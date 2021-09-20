@@ -18,7 +18,7 @@ router.post("/sendOtp",AuthController.sendOtp);
 
 router.post("/verifyOtp",AuthController.verifyOtp);
 
-router.post("/refreshToken",isAuth,AuthController.refreshToken);
+router.get("/refreshToken",AuthController.refreshToken);
 
 /*-------------------Seme Protected Route---------------*/
 router.post("/setName",isAuth,ActivateController.updateName);

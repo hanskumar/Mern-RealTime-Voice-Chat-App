@@ -6,8 +6,8 @@ const ProtectedRoute = ({children,...rest}) => {
 
     const stateData = useSelector(state => state.auth);
 
-    const isAuth = true;
-    const isActivated = true;
+    const isAuth = stateData.isAuth;
+    const isActivated = stateData.isActivated;;
 
     console.log("vallue of state",stateData.isActivated);
 

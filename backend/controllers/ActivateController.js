@@ -17,17 +17,16 @@ class ActivateController {
 
         const userId = req.user._id;
 
-        const user = await userService.findUser({ _id: userId });
-        if (!user) {
-            res.status(404).json({ message: 'User not found!' });
-        }
-
         try {
 
-            user.activated = true;
+            const user = await userService.findUser({ _id: userId });
+            if (!user) {
+                res.status(404).json({ message: 'User not found!' });
+            }
+
             user.name = fullname;
             //user.avatar = 'img url';
-            const response = user.save();
+            user.save();
 
             let userData = {
                 _id: user._id,
@@ -38,7 +37,7 @@ class ActivateController {
                 avatar :user.avatar,
                 auth:true
             }
-            return apiResponse.successResponseWithData(res,"Account Activated Successfully.", userData);
+            return apiResponse.successResponseWithData(res,"Account Name Updated Successfully.", userData);
 
         } catch (err) {
             console.log(err);
@@ -55,16 +54,16 @@ class ActivateController {
 
         const userId = req.user._id;
 
-        const user = await userService.findUser({ _id: userId });
-        if (!user) {
-            res.status(404).json({ message: 'User not found!' });
-        }
+        try{
+            const user = await userService.findUser({ _id: userId });
 
-        try {
+            if (!user) {
+                res.status(404).json({ message: 'User not found!' });
+            }
 
-            user.activated = true;
+            user.isActivated = true;
             user.avatar = avatar_url;
-            const response = user.save();
+            user.save();
 
             let userData = {
                 _id: user._id,
@@ -73,15 +72,15 @@ class ActivateController {
                 name: user.name,
                 status : user.status,
                 avatar :user.avatar,
-                auth:true
+                auth:true,
+                isActivated:true,
             }
             return apiResponse.successResponseWithData(res,"Account Activated Successfully.", userData);
 
-        } catch (err) {
+        } catch(err){
             console.log(err);
             res.status(500).json({ message: 'message sending failed' });
         }
-
     }
 
 }

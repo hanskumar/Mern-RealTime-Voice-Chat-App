@@ -7,7 +7,8 @@ const rateLimit     = require('express-rate-limit');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet        = require('helmet');
 const apiRouter     = require("./routes/ApiRoutes");
-const cors = require('cors')
+const cors          = require('cors')
+const cookieParser  = require('cookie-parser')
 
 /**
  * DB Connect
@@ -37,7 +38,12 @@ app.use(express.json());
 // set security HTTP headers
 app.use(helmet())
 
-app.use(cors())
+app.use(cookieParser());
+const corsOption = {
+    credentials: true,
+    origin: ['http://localhost:3000'],
+};
+app.use(cors(corsOption));
 
 app.use("/api/", apiRouter);
 

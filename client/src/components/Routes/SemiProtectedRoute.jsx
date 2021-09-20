@@ -4,13 +4,12 @@ import { useSelector } from 'react-redux';
 
 const SemiProtectedRoute = ({children,...rest}) => {
 
-    const state = useSelector(state => state.auth);
+    const Authstate = useSelector((state) => state.auth);
 
-    /* const isAuth = state.isAuth;
-    const isActivated = state.isActivated; */
+    console.log("Auth Value from Redux",Authstate)
 
     const isAuth = true;
-    const isActivated = false;
+    const isActivated = Authstate.isActivated;
 
     return (
 
@@ -18,20 +17,20 @@ const SemiProtectedRoute = ({children,...rest}) => {
         
             render={({ location }) => {
 
-                return !isAuth && !isActivated ? (
+                return !isAuth  ? (
                     <Redirect to={{
-                        pathname: '/authenticate',
+                        pathname: '/',
                         state: { from: location },
                     }}/>
                 )
                 : isAuth && !isActivated ?
                 (
+                    children
+                ): (
                     <Redirect to={{
-                        pathname: '/activate',
+                        pathname: '/rooms',
                         state: { from: location },
                     }}/>
-                ): (
-                    children
                 )
             }}
         ></Route>

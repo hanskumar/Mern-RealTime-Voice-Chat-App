@@ -28,13 +28,14 @@ class AuthController {
         try {
             // await otpService.sendBySms(phone, otp);
             res.status(200).json({
+                statusCode:1,
                 hash: `${hash}.${expires}`,
                 phone,
                 otp,
             });
         } catch (err) {
             console.log(err);
-            res.status(500).json({ message: 'message sending failed' });
+            res.status(500).json({statusCode:0, message: 'message sending failed' });
         }
     }
 
@@ -86,8 +87,8 @@ class AuthController {
                         avatar :user.avatar,
                     }
 
-                    userData.accessToken = accessToken;
-                    userData.refreshToken = refreshToken;
+                   /*  userData.accessToken = accessToken;
+                    userData.refreshToken = refreshToken; */
 
                     /*---------Store Refresh Token in cookies------------*/
 
@@ -141,7 +142,7 @@ class AuthController {
             const token = tokenService.findRefreshToken(userdata.id,refreshToken);
 
             if(!token){
-                return apiResponse.unauthorizedResponse(res, "No RefToken found in DB ");
+                return apiResponse.unauthorizedResponse(res, "No refreshToken Token found ");
             }
 
         } catch(err){

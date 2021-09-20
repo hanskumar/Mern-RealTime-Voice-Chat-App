@@ -1,35 +1,22 @@
 /*
- * Middleware to check  auth token
+ * Middleware to check user authantication token
 */
 const JWT           = require('jsonwebtoken');
-const apiResponse   = require("../services/ApiResponse");
 const tokenService  = require("../services/jwttoken-service");
 
-
 module.exports = async function (req, res, next) {
-    try{
-        const authHeader = req.headers['authorization'] || req.headers['x-access-token'];
-        if(authHeader){
-
-            var token  = req.headers.authorization.split("Bearer ")[1] || undefined;
-           
-            if(!token){
-                throw new Error();
-            }
-
-            const userData = await tokenService.verifyAccessToken(token);
-
-            if (!userData) {
-                throw new Error();
-            }
-            req.user = userData;
-            next(); 
-
-        } else {
-            return apiResponse.unauthorizedResponse(res, "Unautharized Error");
+    try {
+        const { accessToken } = req.cookies;
+        if (!accessToken) {
+            throw new Error();
         }
-
+        const userData = await tokenService.verifyAccessToken(accessToken);
+        if (!userData) {
+            throw new Error();
+        }
+        req.user = userData;
+        next();
     } catch (err) {
         res.status(401).json({ message: 'Invalid token' });
     }
-}
+};

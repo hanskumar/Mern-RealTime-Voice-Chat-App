@@ -16,19 +16,18 @@ const Phone = ({onNext}) => {
 
     const onSubmit = async(data)=> {
 
-        console.log("phone Data:",data);
-
-        /* dispatch(sendOtp({phone}))
-        onNext(); */
+        //console.log("phone Data:",data);
+        dispatch(sendOtp(data));
+        onNext(); 
     }
 
     return (
         <>
             <Card title="Enter your Phone Number" icon="phone" >
-                <form onSubmit={handleSubmit(onSubmit)} autocomplete="off">
+                <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
 
                     <input
-                        className={styles.input} 
+                        className="input"
                         type="text"
                         placeholder="+917047679756"
                         name="phone"

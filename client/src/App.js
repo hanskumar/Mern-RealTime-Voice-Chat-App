@@ -24,13 +24,13 @@ function App() {
             <Authenticate />
         </GuestRoute>
 
-        {/* <SemiProtectedRoute path="/activate" exact>
+        <SemiProtectedRoute path="/activate" exact>
             <AccountActivate />
-        </SemiProtectedRoute> */}
+        </SemiProtectedRoute>
 
-        <Router path="/activate" exact>
+       {/*  <Router path="/activate" exact>
             <AccountActivate />
-        </Router>
+        </Router> */}
 
         <ProtectedRoute path="/rooms" >
             <Rooms/>

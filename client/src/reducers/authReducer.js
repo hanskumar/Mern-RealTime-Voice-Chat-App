@@ -11,10 +11,12 @@ const intialState = {
         email:'',
         avatar:'',
         phone:''
-    },
+    }, 
+    //user:null,
     isAuth:false,
     isActivated:false,
-    otpStatus:false,
+    otpSendStatus:false,
+    otpverifyStatus:false,
     hash:'',
     phone:'',
     error:'',
@@ -43,7 +45,7 @@ export default (state=intialState,action)=>{
                 state = {
                     ...state,
                     isloading:false,
-                    otpStatus:true,
+                    otpSendStatus:true,
                     phone:action.payload.phone,
                     hash:action.payload.hash
                 }
@@ -53,13 +55,20 @@ export default (state=intialState,action)=>{
                 state = {
                     ...state,
                     isloading:false,
-                    otpStatus:true,
                     //user:action.payload.data,
                     isAuth:true,
-                    isActivated:true,
+                    otpverifyStatus:true,
                     token:action.payload.token
                 }
                 break   
+
+        case sendOtpConstant.OTP_VERIFICATION_FAILURE:
+                state = {
+                    ...state,
+                    isloading:false,
+                    error:action.payload.error
+                }
+                break        
                 
         case accountActivationConstant.SET_NAME_SUCCESS:
 
@@ -76,6 +85,7 @@ export default (state=intialState,action)=>{
 
             state = {
                 ...state,
+                isActivated: true,
                 user:{
                     ...state.user,
                     avatar:action.payload.avatar
