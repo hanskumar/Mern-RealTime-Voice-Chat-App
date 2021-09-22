@@ -71,7 +71,7 @@ const AvatarStep = () => {
         .catch(err => setLoading(false))
     }
 
-    if(loading) return <Loader message="Activation in progress..." />;
+    if(loading) return <Loader message="Activation in progress...Please Wait.." />;
 
     return (
         <>

@@ -46,27 +46,25 @@ export const sendOtp=(phone)=>{
     }
 }
 
-export const verfifyOtp= (data)=>{
+export const verfifyOtp= (frmdata)=>{
 
     return async(dispatch) => {
 
-        // Dispatch action before send request
+        // Dispatch before send request
 
         try {
             //API call
-            const res = await axiosIntance.post('/verifyOtp',{...data});
-    
+            const res = await axiosIntance.post('/verifyOtp',{...frmdata});
+            
             if(res.status === 200){
     
-                const { data } = res.data;
-                //console.log("Verify OTP respononse",data);
-    
-                //localStorage.setItem('token',data.accessToken);
-                //localStorage.setItem('user', JSON.stringify(data));
-    
+                //const { data } = res.data;
+
+                console.log("Verify OTP respononse",res.data);
+
                 dispatch({
                     type:verIfyOtpConstant.OTP_VERIFICATION_SUCCESS,
-                    payload:{user:data,token:data.accessToken}
+                    payload:{user:res.data.user,isAuth:res.data.auth,isActivated:res.data.user.activated}
                 });
     
             } else {

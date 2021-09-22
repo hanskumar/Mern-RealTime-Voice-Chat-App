@@ -21,7 +21,7 @@ const rooms = [
         totalPeople: 40,
     },
     {
-        id: 3,
+        id: 2,
         topic: 'What’s new in machine learning?',
         speakers: [
             {
@@ -38,7 +38,7 @@ const rooms = [
         totalPeople: 40,
     },
     {
-        id: 4,
+        id: 3,
         topic: 'Why people use stack overflow?',
         speakers: [
             {
@@ -55,7 +55,7 @@ const rooms = [
         totalPeople: 40,
     },
     {
-        id: 5,
+        id: 4,
         topic: 'Artificial inteligence is the future?',
         speakers: [
             {

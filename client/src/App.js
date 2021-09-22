@@ -9,9 +9,17 @@ import GuestRoute from './components/Routes/GuestRoute';
 import SemiProtectedRoute from './components/Routes/SemiProtectedRoute';
 import ProtectedRoute from './components/Routes/ProtectedRoute';
 import Rooms from './pages/Rooms';
+import { useLoadingRefresh } from './hooks/useLoadingRefresh';
+import Loader from './components/shard/Loader'
 
 function App() {
-  return (
+
+  // call refresh endpoint
+  const { loading } = useLoadingRefresh();
+
+  return loading ? (
+    <Loader message="Loading, please wait.." />
+  ) : (
     <Router>
       <Navigation/>
 

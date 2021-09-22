@@ -24,11 +24,14 @@ const OtpStep = () => {
         const { otp } = data;
         
         const request = {otp,phone:auth.phone,hash:auth.hash}
-        //console.log("Redux Data::",auth);
+
+        console.log("request::",request);
 
         dispatch(verfifyOtp(request));
 
-        history.push('/activate'); 
+        //console.log("Redux Data OTP PAGE::",auth);
+
+        //history.push('/activate'); 
     }
 
     return (

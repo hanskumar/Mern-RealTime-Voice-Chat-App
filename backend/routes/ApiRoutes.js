@@ -20,10 +20,14 @@ router.post("/verifyOtp",AuthController.verifyOtp);
 
 router.get("/refreshToken",AuthController.refreshToken);
 
-/*-------------------Seme Protected Route---------------*/
+/*-------------------Semi Protected Route---------------*/
 router.post("/setName",isAuth,ActivateController.updateName);
 
 router.post("/setAvatar",isAuth,ActivateController.updateAvatar);
 
+
+
+/*----------Protected Routes----------------*/
+router.post("/logout",AuthController.logout);
 
 module.exports = router;

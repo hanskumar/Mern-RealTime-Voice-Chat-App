@@ -1,18 +1,20 @@
 import { sendOtpConstant } from '../constants/constants'
 import { verIfyOtpConstant } from '../constants/constants'
-import {accountActivationConstant} from '../constants/constants'
+import { accountActivationConstant } from '../constants/constants'
 import { avatarConstant } from '../constants/constants'
+import {autoLoginConstant ,logoutConstatnt } from '../constants/constants'
+
 
 const intialState = {
     token:'',
-    user:{
+    /* user:{
         id:'',
         name:'',
         email:'',
         avatar:'',
         phone:''
-    }, 
-    //user:null,
+    },  */
+    user:null,
     isAuth:false,
     isActivated:false,
     otpSendStatus:false,
@@ -55,10 +57,11 @@ export default (state=intialState,action)=>{
                 state = {
                     ...state,
                     isloading:false,
-                    //user:action.payload.data,
-                    isAuth:true,
+                    user:action.payload.user,
+                    isAuth:action.payload.isAuth,
+                    isActivated:action.payload.isActivated,
                     otpverifyStatus:true,
-                    token:action.payload.token
+                    //token:action.payload.token
                 }
                 break   
 
@@ -91,7 +94,32 @@ export default (state=intialState,action)=>{
                     avatar:action.payload.avatar
                 }
             }
-            break         
+            break    
+            
+        case autoLoginConstant.AUTO_AUTH_SUCCESS:
+                state = {
+                    ...state,
+                    user:action.payload.user,
+                    isAuth:action.payload.isAuth,
+                    isActivated:action.payload.isActivated
+                }
+                break  
+
+        case logoutConstatnt.USER_LOGOUT_SUCCESS:
+            state = {
+                ...state,
+                user:null,
+                isAuth:false,
+                isActivated:false
+            }
+            break 
+            
+        case logoutConstatnt.USER_LOGOUT_FAILURE:
+            state = {
+                ...state,
+                error:action.payload.error
+            }
+            break     
     }
     return state;
 

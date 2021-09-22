@@ -85,6 +85,7 @@ class AuthController {
                         role: user.role,
                         status : user.status,
                         avatar :user.avatar,
+                        activated :user.isActivated,
                     }
 
                    /*  userData.accessToken = accessToken;
@@ -104,7 +105,7 @@ class AuthController {
                         httpOnly: true,
                     });
 
-                    return apiResponse.successResponseWithData(res,"Login Success.", userData);
+                    res.status(200).json({ user: userData, auth: true ,message:"OTP Vefify Successfully"});
 
                 } catch (err) {
                     console.log(err);
@@ -136,10 +137,12 @@ class AuthController {
             return apiResponse.unauthorizedResponse(res, "Unautharized Error");
         }
 
+        console.log("userdata",userdata);
+
         
         // check refresh token from DB
         try{
-            const token = tokenService.findRefreshToken(userdata.id,refreshToken);
+            const token = tokenService.findRefreshToken(userdata._id,refreshToken);
 
             if(!token){
                 return apiResponse.unauthorizedResponse(res, "No refreshToken Token found ");
@@ -151,22 +154,25 @@ class AuthController {
         
         // check if valid user
         try{
-            const user = userService.findUser({ _id: userdata.id });
+            const user = await userService.findUser({ _id: userdata._id });
             if (!user) {
                 return res.status(404).json({ message: 'No user' });
             }
+            
 
             // genrate new Accesstoken
-            const { accessToken, NewrefreshToken } = tokenService.generateTokens({
+            const { accessToken, refreshToken } = tokenService.generateTokens({
                 _id: userdata._id
             });
 
+            //console.log("New Refresh token",refreshToken);
+
             // update refresh token
-            const token = tokenService.updateRefreshToken(userdata.id,NewrefreshToken);
+            const token = tokenService.updateRefreshToken(userdata._id,refreshToken);
 
 
             // set new accessToken ,Refresh token in cookies
-            res.cookie('refreshToken', NewrefreshToken, {
+            res.cookie('refreshToken', refreshToken, {
                 maxAge: 1000 * 60 * 60 * 24 * 30,
                 httpOnly: true,
             });
@@ -176,17 +182,29 @@ class AuthController {
                 httpOnly: true,
             });
 
+        
             // send response to the client
             const userDto = new UserDto(user);
             res.json({ user: userDto, auth: true });
 
         } catch(err){
+            console.log("Error",err);
             return apiResponse.unauthorizedResponse(res, "Internal Error");
         }
        
     }
 
     async logout(req,res){
+
+        const { refreshToken } = req.cookies;
+
+        // delete refresh token from db
+        await tokenService.removeToken(refreshToken);
+
+        // delete cookies
+        res.clearCookie('refreshToken');
+        res.clearCookie('accessToken');
+        res.status(200).json({ user: null, auth: false });
 
     }
 

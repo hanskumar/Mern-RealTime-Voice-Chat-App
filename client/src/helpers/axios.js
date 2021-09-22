@@ -15,8 +15,8 @@ const axiosIntance = axios.create({
 
 // send request to refresh access token after token expire automatically
 axiosIntance.interceptors.response.use(
-    (response) => {
-        return response;
+    (config) => {
+        return config;
     },
     async (error) => {
         const originalRequest = error.config;
